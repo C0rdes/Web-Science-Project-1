@@ -93,6 +93,8 @@ P = TrainingMatrix;
 
 for u = 1 : size(TrainingMatrix, 1)
    for i = 1 : size(TrainingMatrix, 2)
+      %Prematurely set P
+      P(u, i) = -1;
       if TrainingMatrix(u, i) == 0
           % Get N
           N = IndexOfMoviesRatedByEachUser(u, :);
@@ -101,27 +103,21 @@ for u = 1 : size(TrainingMatrix, 1)
           Numerator = 0;
           Denominator = 0;
           for n = N
-              % Get U
               U_i = IndexOfUsersWhoRatedMovies(i, :);
               U_n = IndexOfUsersWhoRatedMovies(n, :);
-              U = intersect(U_i, U_n);
+              U = intersection(U_i, U_n);
               U = U(U ~= 0);
-              
-              % Get user rating
-              R_un = TrainingMatrix(u, n);
-              
-              % Check if U is empty. If so, we ignore
               if ~isempty(U)
-                sim = Sim(i, n, U, Rhat, TrainingMatrix);
-                Numerator = Numerator + R_un * sim;
-                Denominator = Denominator + abs(sim);
+                
               end
           end
           
           if Numerator ~= 0 && Denominator ~= 0
              P(u, i) = Numerator / Denominator; 
           end
-      end
+      else
+          
+      end 
    end
 end
 
